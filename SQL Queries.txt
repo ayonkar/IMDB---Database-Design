@@ -1,0 +1,76 @@
+select m.Name, m.Type, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from MovieOrTV as m
+inner join StarMovie as sm
+    on m.MovieORTVID = sm.MovieORTVID
+inner join Star as s
+    on sm.StarID = s.StarID
+inner join GenreMovie as gm
+    on m.MovieORTVID = gm.MovieORTVID
+inner join Genre as g
+    on gm.GenreID = g.GenreID
+where g.GenreCategoryName like '%Family%'
+and s.Gender = 'F';
+
+
+
+
+select m.Name, count(*) as TotalAwards, rank() OVER (ORDER BY count(*) DESC) AS Rank
+from MovieOrTV as m
+inner join AwardHeader as ah
+    on m.MovieORTVID = ah.MovieORTVID
+inner join AwardCategory as ac
+    on ah.AwardHeaderID = ac.AwardHeaderID
+inner join AwardDetails as ad
+    on ac.AwardCategoryID = ad.AwardCategoryID and ac.AwardHeaderID = ad.AwardHeaderID
+where ad.Status = 'Won' and ah.Year = 2016
+group by m.Name;
+
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
+select TOP 50 count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star as s
+inner join AwardDetails as ad
+    on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'F'
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+
+select TOP 50 count(*) as AwardCount, concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName))) as StarName
+from Star as s
+inner join AwardDetails as ad
+    on s.StarID = ad.StarID
+where ad.Status = 'Won' and s.Gender = 'M'
+group by concat(rtrim(s.StarFirstName),concat(' ',ltrim(s.StarLastName)))
+order by AwardCount desc, StarName;
+
+
+
+select TOP 50 count(*) as AwardCount, concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName))) as DirectorName
+from Director as d
+inner join AwardDetails as ad
+    on d.DirectorID = ad.DirectorID
+where ad.Status = 'Won'
+group by concat(rtrim(d.DirFirstName),concat(' ',ltrim(d.DirLastName)))
+order by AwardCount desc, DirectorName;
+
+
+
+select TOP 50 count(*) as AwardCount, concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName))) as ProducerName
+from Producer as p
+inner join AwardDetails as ad
+    on p.ProducerID = ad.ProducerID
+where ad.Status = 'Won'
+group by concat(rtrim(p.ProdFirstName),concat(' ',ltrim(p.ProdLastName)))
+order by AwardCount desc, ProducerName;
+
+
+select top 50 m.Name, m.Popularity
+from MovieOrTV as m
+order by m.Popularity;
+
+
+1. Give me a list of movie names with highest gross collection for each genre. Make sure the status is 'Nominated' for those movies.
+
+2. Which are the movies who has sold the highest number of tickets in abroad last year. Rank in descending order.
